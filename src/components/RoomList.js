@@ -9,12 +9,22 @@ class RoomList extends Component {
 
     this.state = {
       rooms: [],
+      newRoomName: "",
     };
+  }
+
+  handleFormSubmit(e) {
+    e.preventDefault();
+    this.roomsRef.push(this.state.newRoomName);
+    this.setState({newRoomName: ""});
+  }
+
+  handleRoomNameChange(e) {
+    this.setState({newRoomName: e.target.value});
   }
 
   componentDidMount() {
     this.roomsRef.on('child_added', (snapshot) => {
-      console.log(snapshot);
       var room = {};
       room.name = snapshot.val();
       room.key = snapshot.key;
@@ -26,9 +36,15 @@ class RoomList extends Component {
 
   render() {
     return (
-      this.state.rooms.map(room => {
-        return <div key={room.key}>{room.name}</div>
-      })
+      <div>
+        <ul>
+        {this.state.rooms.map(room => <li key={room.key}>{room.name}</li>)}
+        </ul>
+        <form onSubmit={e => {this.handleFormSubmit(e)}}>
+          <input type="text" value={this.state.newRoomName} onChange={e => {this.handleRoomNameChange(e)}} />
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
     )
   }
 }
